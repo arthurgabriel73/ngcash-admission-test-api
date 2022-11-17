@@ -38,6 +38,29 @@ describe('Users Scenario E2E Test', () => {
         await usersDSL.assertResponseIsConflictException()
     });
 
+    it('should authorize an user', async () => {
+        // Arrange
+        usersDSL.generateUser()
+        await usersDSL.createUser()
+
+        // Act
+        await usersDSL.loginAuthorization()
+
+        // Assert
+        await usersDSL.assertUserIsLogged()
+    });
+
+    it('should throw unauthorized exception when user try to use wrong login credentials', async () => {
+        // Arrange & Act
+        usersDSL.generateUser()
+        await usersDSL.createUser()
+        await usersDSL.generateWrongCredentials()
+
+        // Assert
+        await usersDSL.assertResponseIsUnauthorizedException()
+    });
+
+
     afterAll(async () => {
         await cleanTool.cleanUp("User")
         await usersDSL.closeClient()

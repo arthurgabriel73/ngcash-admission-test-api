@@ -47,6 +47,15 @@ export class UsersDSL {
         this.userId = this.response.id
     }
 
+    async loginAuthorization() {
+        this.response = await this.authDsl.loginTestUser(this.user.username, this.user.password)
+        this.token = this.response.token
+    }
+
+    async generateWrongCredentials() {
+        this.response = await this.authDsl.createWrongCredentialsToLogin(this.user.username)
+    }
+
     // Asserts =========================================================================================================
 
     async assertResponseIsNewUser() {
@@ -56,6 +65,14 @@ export class UsersDSL {
 
     async assertResponseIsConflictException() {
         expect(this.response.statusCode).toEqual(409)
+    }
+
+    async assertResponseIsUnauthorizedException() {
+        expect(this.response.statusCode).toEqual(401)
+    }
+
+    async assertUserIsLogged() {
+        expect(this.response).toHaveProperty("access_token")
     }
 
     async closeClient() {

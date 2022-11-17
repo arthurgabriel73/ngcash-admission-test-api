@@ -33,7 +33,7 @@ export class AuthDSL {
     async createWrongCredentialsToLogin(username: string) {
         const wrongLoginData = {
             "username": username,
-            "password": "Password123!"
+            "password": "WrongPassword123!"
         }
         return await this.driver.authorizeUser(wrongLoginData)
     }
