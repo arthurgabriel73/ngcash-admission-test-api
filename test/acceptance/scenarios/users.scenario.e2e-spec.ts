@@ -26,6 +26,18 @@ describe('Users Scenario E2E Test', () => {
         await usersDSL.assertResponseIsNewUser()
     });
 
+    it('should throw conflict exception when username already exists', async () => {
+        // Arrange
+        usersDSL.generateUser()
+
+        // Act
+        await usersDSL.createUser()
+        await usersDSL.createUser()
+
+        // Assert
+        await usersDSL.assertResponseIsConflictException()
+    });
+
     afterAll(async () => {
         await cleanTool.cleanUp("User")
         await usersDSL.closeClient()

@@ -1,5 +1,6 @@
 import { UsersDriver } from "../drivers/users.driver"
 import { AuthDSL } from "./auth.dsl";
+import {ConflictException} from "@nestjs/common";
 
 export class UsersDSL {
     protected driver: UsersDriver
@@ -51,6 +52,10 @@ export class UsersDSL {
     async assertResponseIsNewUser() {
         expect(this.response.user.username).toEqual(this.user.username)
         expect(this.response.user.id).toBeTruthy()
+    }
+
+    async assertResponseIsConflictException() {
+        expect(this.response.statusCode).toEqual(409)
     }
 
     async closeClient() {
