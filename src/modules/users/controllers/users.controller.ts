@@ -4,6 +4,8 @@ import {UsersService} from "../services/users.service";
 import {ResponseMapper} from "../../../interceptors/dto-response-mapper";
 import {UserDto} from "../dtos/user.dto";
 
+export const USERS_URL = "/users"
+
 @Controller('users')
 export class UsersController {
     constructor(private usersService: UsersService) {}

@@ -1,16 +1,16 @@
 version: "3.9"
 
 services:
-  app:
-    build: .
-    entrypoint: .docker/entrypoint.sh
-    container_name: ngcash-app
-    ports:
-      - "3001:3001"
-    volumes:
-      - .:/home/node/app
-    depends_on:
-      - db
+#  app:
+#    build: .
+#    entrypoint: .docker/entrypoint.sh
+#    container_name: ngcash-app
+#    ports:
+#      - "3001:3001"
+#    volumes:
+#      - .:/home/node/app
+#    depends_on:
+#      - db
 
   db:
     build: .docker/postgres
@@ -27,14 +27,14 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: ngcash-pgadmin
-    tty: true
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-    ports:
-      - "8000:80"
-    depends_on:
-      - db
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    container_name: ngcash-pgadmin
+#    tty: true
+#    environment:
+#      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+#      - PGADMIN_DEFAULT_PASSWORD=admin
+#    ports:
+#      - "8000:80"
+#    depends_on:
+#      - db

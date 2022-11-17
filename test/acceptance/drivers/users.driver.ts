@@ -2,8 +2,7 @@ import * as request from 'supertest'
 import { clientFactory } from "./client"
 import { INestApplication } from "@nestjs/common/interfaces/nest-application.interface";
 import { CreateUserDto } from "../../../src/modules/users/dtos/create-user.dto";
-import { AUTH_URL } from "../../../src/modules/auth/controllers/auth.controller";
-import { USERS_URL } from "../../../src/modules/users/controllers/users.controller";
+import {USERS_URL} from "../../../src/modules/users/controllers/users.controller";
 
 export class UsersDriver {
     private test_client: INestApplication
@@ -24,7 +23,7 @@ export class UsersDriver {
     async createTestUser(userJSON: CreateUserDto) {
         await this.createUsersClient()
         return await request(this.test_client.getHttpServer())
-            .post(AUTH_URL + "/signup")
+            .post(this.url + "/signup")
             .send(userJSON as CreateUserDto)
             .then(({body}) => {
                 return body

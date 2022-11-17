@@ -36,8 +36,8 @@ export class UsersDSL {
 
     generateUser() {
         this.user = {
-            "username": "username",
-            "password": "12345678",
+            "username": "jeffbeck123",
+            "password": "Password!123",
         }
     }
 
@@ -49,8 +49,8 @@ export class UsersDSL {
     // Asserts =========================================================================================================
 
     async assertResponseIsNewUser() {
-        expect(this.response.email).toEqual(this.user.email)
-        expect(this.response.id).toBeTruthy()
+        expect(this.response.user.username).toEqual(this.user.username)
+        expect(this.response.user.id).toBeTruthy()
     }
 
     async closeClient() {

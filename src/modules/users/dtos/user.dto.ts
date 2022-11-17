@@ -5,6 +5,9 @@ import {User} from "../entities/users.entity";
 
 export class UserDto implements ResponseDTO {
     @ApiProperty()
+    id: number
+
+    @ApiProperty()
     username: string
 
     @ApiProperty()
@@ -12,6 +15,7 @@ export class UserDto implements ResponseDTO {
 
     mapToResponse(user: User): { user: UserDto } {
         this.username = user.username
+        this.id = user.id
         return { user: this }
     }
 }
