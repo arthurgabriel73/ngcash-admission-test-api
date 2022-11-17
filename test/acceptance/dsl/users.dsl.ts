@@ -1,6 +1,7 @@
 import { UsersDriver } from "../drivers/users.driver"
 import { AuthDSL } from "./auth.dsl";
 import {AccountsDSL} from "./accounts.dsl";
+import {TransactionsDSL} from "./transactions.dsl";
 
 export class UsersDSL {
     protected driver: UsersDriver
@@ -9,12 +10,14 @@ export class UsersDSL {
     protected response
     private authDsl: AuthDSL
     private accountsDsl: AccountsDSL
+    private transactionsDsl: TransactionsDSL
     private token
 
     constructor() {
         this.driver = new UsersDriver()
         this.authDsl = new AuthDSL()
         this.accountsDsl = new AccountsDSL()
+        this.transactionsDsl = new TransactionsDSL()
         this.user = null
         this.userId = ""
         this.response = null
@@ -44,6 +47,13 @@ export class UsersDSL {
         }
     }
 
+    generateSecondUser() {
+        this.user = {
+            "username": "sting456",
+            "password": "Password!123",
+        }
+    }
+
     async createUser() {
         this.response = await this.driver.createTestUser(this.user)
         this.userId = this.response.id
@@ -60,6 +70,11 @@ export class UsersDSL {
 
     async getBalance() {
         this.response = await this.accountsDsl.getBalance(this.token)
+    }
+
+    async doCashOut() {
+        this.generateUser()
+        this.response = await this.transactionsDsl.doCashOut(this.token, this.user.username )
     }
 
     // Asserts =========================================================================================================
@@ -83,6 +98,10 @@ export class UsersDSL {
 
     async assertResponseIsBalance() {
         expect(this.response).toHaveProperty("account_balance")
+    }
+
+    async assertResponseIsNewCurrentTransaction() {
+        expect(this.response).toHaveProperty("createdAt")
     }
 
     async closeClient() {

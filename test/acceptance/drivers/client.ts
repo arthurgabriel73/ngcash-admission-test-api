@@ -2,6 +2,8 @@ import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { UsersModule } from "../../../src/modules/users/users.module";
 import { AuthModule } from "../../../src/modules/auth/auth.module";
+import {AccountsModule} from "../../../src/modules/accounts/accounts.module";
+import {TransactionsModule} from "../../../src/modules/transactions/transactions.module";
 
 
 export async function clientFactory(): Promise<INestApplication>{
@@ -11,6 +13,8 @@ export async function clientFactory(): Promise<INestApplication>{
         imports: [
             UsersModule,
             AuthModule,
+            AccountsModule,
+            TransactionsModule,
         ],
     }).compile();
 

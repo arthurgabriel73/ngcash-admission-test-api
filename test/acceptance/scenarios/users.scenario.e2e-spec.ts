@@ -75,6 +75,37 @@ describe('Users Scenario E2E Test', () => {
         await usersDSL.assertResponseIsBalance()
     });
 
+    it('should create a new transaction from current user to target user', async () => {
+        // Arrange
+        usersDSL.generateUser()
+        await usersDSL.createUser()
+        usersDSL.generateSecondUser()
+        await usersDSL.createUser()
+        await usersDSL.loginAuthorization()
+
+        // Act
+        await usersDSL.doCashOut()
+
+        // Assert
+        await usersDSL.assertResponseIsNewCurrentTransaction()
+    });
+
+    it('should show all transactions from current user', async () => {
+        // Arrange
+        usersDSL.generateUser()
+        await usersDSL.createUser()
+        usersDSL.generateSecondUser()
+        await usersDSL.createUser()
+        await usersDSL.loginAuthorization()
+        await usersDSL.doCashOut()
+
+        // Act
+        await usersDSL.getTransactions()
+
+        // Assert
+        await usersDSL.assertResponseIsATransactionsArray()
+    });
+
     afterAll(async () => {
         await cleanTool.cleanUp("User")
         await cleanTool.cleanUp("Account")

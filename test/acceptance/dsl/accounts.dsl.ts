@@ -1,4 +1,3 @@
-import { AuthDriver } from "../drivers/auth.driver";
 import {AccountsDriver} from "../drivers/accounts.driver";
 
 export class AccountsDSL {
@@ -19,7 +18,6 @@ export class AccountsDSL {
     }
 
     resetDataCache() {
-        this.userId = ""
         this.response = {}
     }
 
