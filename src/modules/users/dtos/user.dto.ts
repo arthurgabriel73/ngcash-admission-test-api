@@ -16,6 +16,7 @@ export class UserDto implements ResponseDTO {
     mapToResponse(user: User): { user: UserDto } {
         this.username = user.username
         this.id = user.id
+        this.accountId = user.account.id
         return { user: this }
     }
 }

@@ -1,6 +1,6 @@
 import { UsersDriver } from "../drivers/users.driver"
 import { AuthDSL } from "./auth.dsl";
-import {ConflictException} from "@nestjs/common";
+import {AccountsDSL} from "./accounts.dsl";
 
 export class UsersDSL {
     protected driver: UsersDriver
@@ -8,11 +8,13 @@ export class UsersDSL {
     private userId
     protected response
     private authDsl: AuthDSL
+    private accountsDsl: AccountsDSL
     private token
 
     constructor() {
         this.driver = new UsersDriver()
         this.authDsl = new AuthDSL()
+        this.accountsDsl = new AccountsDSL()
         this.user = null
         this.userId = ""
         this.response = null
@@ -49,11 +51,15 @@ export class UsersDSL {
 
     async loginAuthorization() {
         this.response = await this.authDsl.loginTestUser(this.user.username, this.user.password)
-        this.token = this.response.token
+        this.token = this.response.access_token
     }
 
     async generateWrongCredentials() {
         this.response = await this.authDsl.createWrongCredentialsToLogin(this.user.username)
+    }
+
+    async getBalance() {
+        this.response = await this.accountsDsl.getBalance(this.token)
     }
 
     // Asserts =========================================================================================================
@@ -73,6 +79,10 @@ export class UsersDSL {
 
     async assertUserIsLogged() {
         expect(this.response).toHaveProperty("access_token")
+    }
+
+    async assertResponseIsBalance() {
+        expect(this.response).toHaveProperty("account_balance")
     }
 
     async closeClient() {

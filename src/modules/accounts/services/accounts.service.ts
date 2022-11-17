@@ -1,5 +1,5 @@
 import {Repository} from "typeorm";
-import {Inject, Injectable} from "@nestjs/common";
+import {Inject, Injectable, NotFoundException} from "@nestjs/common";
 import {Account} from "../entities/accounts.entity";
 require('dotenv').config();
 
@@ -16,5 +16,17 @@ export class AccountsService {
         })
 
         return await this.accountsRepository.save(newAccount)
+    }
+
+    async getBalance(accountId: number) {
+        const account = await this.accountsRepository.findOne({
+            where: {id: accountId}
+        })
+
+        if (!account) {
+            throw new NotFoundException('Account not found.')
+        }
+
+        return {"account_balance": `${account.balance}`}
     }
 }

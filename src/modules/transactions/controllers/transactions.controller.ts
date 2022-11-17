@@ -10,7 +10,7 @@ export class TransactionsController {
 
     @Post('cashout')
     async cashOut(@Body() data: CashOutDto) {
-        return this.transactionsService.create(data)
+        return await this.transactionsService.create(data)
     }
 
 }

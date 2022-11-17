@@ -62,6 +62,19 @@ describe('Users Scenario E2E Test', () => {
     });
 
 
+    it('should show users account balance', async () => {
+        // Arrange
+        usersDSL.generateUser()
+        await usersDSL.createUser()
+        await usersDSL.loginAuthorization()
+
+        // Act
+        await usersDSL.getBalance()
+
+        // Assert
+        await usersDSL.assertResponseIsBalance()
+    });
+
     afterAll(async () => {
         await cleanTool.cleanUp("User")
         await cleanTool.cleanUp("Account")
