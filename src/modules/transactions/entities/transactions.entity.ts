@@ -2,14 +2,13 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-    OneToOne,
-    JoinColumn, OneToMany, JoinTable, CreateDateColumn,
+    OneToMany, JoinTable, CreateDateColumn,
 } from "typeorm";
 import {Account} from "../../accounts/entities/accounts.entity";
 
 
 @Entity({ name: "Transaction" })
-export class User {
+export class Transaction {
     @PrimaryGeneratedColumn()
     readonly id: number;
 
