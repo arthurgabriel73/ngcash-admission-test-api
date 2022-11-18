@@ -5,7 +5,7 @@ import {TransactionsService} from "../services/transactions.service";
 import {Transaction} from "../entities/transactions.entity";
 import {GetAllTransactionsDto} from "../dtos/get-filtered-transactions.dto";
 
-export const TRANSACTIONS_URL = "/accounts"
+export const TRANSACTIONS_URL = "/transactions"
 
 @UseGuards(JwtAuthGuard)
 @Controller('transactions')

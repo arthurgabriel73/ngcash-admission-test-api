@@ -1,5 +1,5 @@
 import {Repository} from "typeorm";
-import {Inject, Injectable, NotFoundException} from "@nestjs/common";
+import {forwardRef, Inject, Injectable, NotFoundException} from "@nestjs/common";
 import {Account} from "../entities/accounts.entity";
 import {UsersService} from "../../users/services/users.service";
 require('dotenv').config();
@@ -11,7 +11,10 @@ export class AccountsService {
     @Inject('ACCOUNTS_REPOSITORY')
     private accountsRepository: Repository<Account>
 
-    constructor(private usersService: UsersService) {}
+    constructor(
+        @Inject(forwardRef(() => UsersService))
+        private usersService: UsersService
+    ) {}
 
     async createNewAccount(): Promise<Account> {
         const newAccount = await this.accountsRepository.create({
@@ -35,7 +38,6 @@ export class AccountsService {
 
     async findOneAccountByUsername(username: string): Promise<Account> {
         const user = await this.usersService.findOne(username)
-
         if (!user) {
             throw new NotFoundException('Account not found.')
         }

@@ -2,7 +2,7 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-    OneToMany, JoinTable, CreateDateColumn,
+    OneToMany, JoinTable, CreateDateColumn, JoinColumn, OneToOne,
 } from "typeorm";
 import {Account} from "../../accounts/entities/accounts.entity";
 
@@ -12,12 +12,12 @@ export class Transaction {
     @PrimaryGeneratedColumn()
     readonly id: number;
 
-    @OneToMany(() => Account, (account) => account.id)
-    @JoinTable({ name: "DebitedAccount" })
+    @OneToOne(() => Account, (account) => account.id)
+    @JoinColumn({ name: "DebitedAccount" })
     debitedAccount: Account
 
-    @OneToMany(() => Account, (account) => account.id)
-    @JoinTable({ name: "CreditedAccount" })
+    @OneToOne(() => Account, (account) => account.id)
+    @JoinColumn({ name: "CreditedAccount" })
     creditedAccount: Account
 
     @Column()

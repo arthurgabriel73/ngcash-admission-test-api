@@ -24,10 +24,13 @@ export class TransactionsDSL {
 
     async doCashOut(token: string, targetUsername: string) {
         const cashOutDto = new CashOutDto()
-        cashOutDto.value = 3500
+        cashOutDto.value = 33
         return await this.driver.doCashOut(token, targetUsername, cashOutDto)
     }
 
+    async getSelfTransactions(token: string) {
+        return await this.driver.getSelfTransactions(token)
+    }
     async closeClient() {
         await this.driver.driverCloseClient()
     }

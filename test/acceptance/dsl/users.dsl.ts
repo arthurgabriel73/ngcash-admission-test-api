@@ -77,6 +77,9 @@ export class UsersDSL {
         this.response = await this.transactionsDsl.doCashOut(this.token, this.user.username )
     }
 
+    async getSelfTransactions() {
+        this.response = await this.transactionsDsl.getSelfTransactions(this.token)
+    }
     // Asserts =========================================================================================================
 
     async assertResponseIsNewUser() {
@@ -102,6 +105,10 @@ export class UsersDSL {
 
     async assertResponseIsNewCurrentTransaction() {
         expect(this.response).toHaveProperty("createdAt")
+    }
+
+    async assertResponseIsATransactionsArray() {
+        console.log(this.response)
     }
 
     async closeClient() {

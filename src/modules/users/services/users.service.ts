@@ -1,6 +1,6 @@
 import {User} from "../entities/users.entity";
 import {Repository} from "typeorm";
-import {ConflictException, Inject, Injectable, NotFoundException} from "@nestjs/common";
+import {ConflictException, forwardRef, Inject, Injectable, NotFoundException} from "@nestjs/common";
 import {CreateUserDto} from "../dtos/create-user.dto";
 import * as bcrypt from 'bcrypt';
 import {AccountsService} from "../../accounts/services/accounts.service";
@@ -10,9 +10,10 @@ export class UsersService {
     @Inject('USERS_REPOSITORY')
     private usersRepository: Repository<User>
 
-    constructor(private accountsService: AccountsService) {
-
-    }
+    constructor(
+        @Inject(forwardRef(() => AccountsService))
+        private accountsService: AccountsService
+    ) {}
 
     async create(data: CreateUserDto): Promise<User> {
         const username = data.username

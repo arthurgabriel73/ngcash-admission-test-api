@@ -12,6 +12,7 @@ describe('Users Scenario E2E Test', () => {
 
     beforeEach(async () => {
         await cleanTool.cleanUp("User")
+        await cleanTool.cleanUp("Transaction")
         await cleanTool.cleanUp("Account")
         usersDSL.resetDataCache()
     })
@@ -100,7 +101,7 @@ describe('Users Scenario E2E Test', () => {
         await usersDSL.doCashOut()
 
         // Act
-        await usersDSL.getTransactions()
+        await usersDSL.getSelfTransactions()
 
         // Assert
         await usersDSL.assertResponseIsATransactionsArray()
@@ -108,6 +109,7 @@ describe('Users Scenario E2E Test', () => {
 
     afterAll(async () => {
         await cleanTool.cleanUp("User")
+        await cleanTool.cleanUp("Transaction")
         await cleanTool.cleanUp("Account")
         await usersDSL.closeClient()
     });

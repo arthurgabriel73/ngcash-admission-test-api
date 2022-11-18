@@ -1,25 +1,41 @@
 import {Between, Repository} from "typeorm";
-import {BadRequestException, Inject, Injectable} from "@nestjs/common";
+import {BadRequestException, Inject, Injectable, NotAcceptableException} from "@nestjs/common";
 import {Transaction} from "../entities/transactions.entity";
 import {GetAllTransactionsDto} from "../dtos/get-filtered-transactions.dto";
 import {CashOutDto} from "../dtos/cash-out.dto";
 import {AccountsService} from "../../accounts/services/accounts.service";
+import {Account} from "../../accounts/entities/accounts.entity";
 
 @Injectable()
 export class TransactionsService {
     @Inject('TRANSACTIONS_REPOSITORY')
     private transactionsRepository: Repository<Transaction>
 
+    @Inject('ACCOUNTS_REPOSITORY')
+    private accountsRepository: Repository<Account>
+
     constructor(private accountsService: AccountsService) {}
 
     async create(data: CashOutDto, currentAccountId: number, targetUsername: string): Promise<Transaction> {
         const targetAccount = await this.accountsService.findOneAccountByUsername(targetUsername)
         const currentAccount = await this.accountsService.findAccountById(currentAccountId)
-        const newTransaction = new Transaction()
+        let newTransaction = new Transaction()
+
+        currentAccount.balance = currentAccount.balance - data.value
+        targetAccount.balance = targetAccount.balance + data.value
+
+        if (currentAccount.balance < 0) {
+            throw new NotAcceptableException('Account out of founds.')
+        }
 
         newTransaction.debitedAccount = currentAccount
         newTransaction.creditedAccount = targetAccount
         newTransaction.value = data.value
+
+
+        await this.accountsRepository.save(currentAccount)
+        await this.accountsRepository.save(targetAccount)
+        console.log(newTransaction)
 
         return await this.transactionsRepository.save(newTransaction)
     }

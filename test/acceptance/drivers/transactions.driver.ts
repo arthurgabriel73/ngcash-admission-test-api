@@ -31,6 +31,16 @@ export class TransactionsDriver {
             })
     };
 
+    async getSelfTransactions(token: string) {
+        await this.createTransactionsClient()
+        return await request(this.test_client.getHttpServer())
+            .get(this.url + "/self")
+            .set('Authorization', 'Bearer ' + token)
+            .then(({body}) => {
+                return body
+            })
+    }
+
     async driverCloseClient() {
         await this.test_client.close()
     }
