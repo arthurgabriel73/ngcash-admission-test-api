@@ -35,7 +35,6 @@ export class TransactionsService {
 
         await this.accountsRepository.save(currentAccount)
         await this.accountsRepository.save(targetAccount)
-        console.log(newTransaction)
 
         return await this.transactionsRepository.save(newTransaction)
     }

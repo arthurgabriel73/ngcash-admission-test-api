@@ -2,6 +2,7 @@ import { UsersDriver } from "../drivers/users.driver"
 import { AuthDSL } from "./auth.dsl";
 import {AccountsDSL} from "./accounts.dsl";
 import {TransactionsDSL} from "./transactions.dsl";
+import {exploreApiConsumesMetadata} from "@nestjs/swagger/dist/explorers/api-consumes.explorer";
 
 export class UsersDSL {
     protected driver: UsersDriver
@@ -108,7 +109,7 @@ export class UsersDSL {
     }
 
     async assertResponseIsATransactionsArray() {
-        console.log(this.response)
+        expect(this.response[0].createdAt).toBeTruthy()
     }
 
     async closeClient() {
