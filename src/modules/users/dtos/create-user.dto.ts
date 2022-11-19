@@ -11,7 +11,8 @@ export class CreateUserDto {
 
     @IsString()
     @IsNotEmpty()
-    @MinLength(8)
-    @Matches(/^(?=.*\d)(?=.*[!@#$%^&*])[\w!@#$%^&*]{6,60}$/)
+    @Matches(/^(?=.*\d)(?=.*[!@#$%^&*])[\w!@#$%^&*]{8,60}$/, {message: 'Password must have: ' +
+            'length from 8 to 60 and at least: One Symbol, One Number, One Uppercase Alphabetic Character, ' +
+            'One Lowercase Alphabetic Character.'})
     password: string;
 }
