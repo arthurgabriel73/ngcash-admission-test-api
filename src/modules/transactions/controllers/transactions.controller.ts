@@ -4,9 +4,11 @@ import {CashOutDto} from "../dtos/cash-out.dto";
 import {TransactionsService} from "../services/transactions.service";
 import {Transaction} from "../entities/transactions.entity";
 import {GetAllTransactionsDto} from "../dtos/get-filtered-transactions.dto";
+import {ApiTags} from "@nestjs/swagger";
 
 export const TRANSACTIONS_URL = "/transactions"
 
+@ApiTags('Transactions')
 @UseGuards(JwtAuthGuard)
 @Controller('transactions')
 export class TransactionsController {
