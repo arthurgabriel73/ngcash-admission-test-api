@@ -44,22 +44,10 @@ export class TransactionsService {
     }
 
     async getFilteredTransactions(data: GetAllTransactionsDto, currentAccountId: number): Promise<Transaction[]> {
-        let day: Date
-        let start: Date
-        let end: Date
+        let day: Date = null
 
         if (data.day) {
             day = new Date(Number(data.day)*1000)
-        } else if (data.start) {
-            start = new Date(Number(data.start)*1000)
-        } else {
-            start = new Date(1000)
-        }
-
-        if (data.end) {
-            end = new Date(Number(data.end)*1000)
-        } else {
-            end = new Date(9000000000000)
         }
 
         if (data.type) {
@@ -68,59 +56,48 @@ export class TransactionsService {
                     '"cash-out" for parameters.')
             }
         }
-        if (data.day) {
+
+        if (data.type === "cash-in") {
+            return await this.getCashInFilteredByDay(currentAccountId, day)
+        }
+
+        if (data.type === "cash-out") {
+            return await this.getCashOutFilteredByDay(currentAccountId, day)
+        }
+
+        return await this.transactionsRepository
+            .createQueryBuilder("Transaction")
+            .where(`Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
+            .where(`Transaction.creditedAccountId = :currentAccountId;`, {currentAccountId})
+            .getMany()
+    }
+
+    async getCashInFilteredByDay(currentAccountId: number, day: Date): Promise<Transaction[]> {
+        if (day) {
+            return await this.transactionsRepository
+                .createQueryBuilder("Transaction")
+                .where(`Transaction.creditedAccountId = :currentAccountId;`, {currentAccountId})
+                .where(`Transaction.createdAt = :day`, {day})
+                .getMany()
+        }
+        return await this.transactionsRepository
+            .createQueryBuilder("Transaction")
+            .where(`Transaction.creditedAccountId = :currentAccountId;`, {currentAccountId})
+            .getMany()
+    }
+
+    async getCashOutFilteredByDay(currentAccountId: number, day: Date): Promise<Transaction[]> {
+        if(day) {
             return await this.transactionsRepository
                 .createQueryBuilder("Transaction")
                 .where(`Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
-                .where(`Transaction.creditedAccountId = :currentAccountId;`, {currentAccountId})
+                .where(`Transaction.createdAt = :day`, {day})
                 .getMany()
         }
+        return await this.transactionsRepository
+            .createQueryBuilder("Transaction")
+            .where(`Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
+            .getMany()
 
-        if (data.start && data.end) {
-            return await this.transactionsRepository.find({ where: {
-                    createdAt: Between(
-                        start, end
-                    ),
-                }
-            })
-        }
-        if (data.type === "cash-out") {
-            return await this.transactionsRepository.find({ relations: {
-                debitedAccount: true
-                },
-            where: {
-                debitedAccount: {
-                    id: currentAccountId
-                }
-            }
-            })
-        }
-
-        if (data.type === "cash-in") {
-            return await this.transactionsRepository.find({ relations: {
-                creditedAccount: true
-                },
-            where: {
-                creditedAccount: {
-                    id: currentAccountId
-                }
-            }
-            })
-        }
-
-        return await this.transactionsRepository.find({
-            relations: {
-                creditedAccount: true,
-                debitedAccount: true,
-            },
-            where: {
-                creditedAccount: {
-                    id: currentAccountId
-                },
-                debitedAccount: {
-                    id: currentAccountId
-                }
-            }
-        })
     }
 }
