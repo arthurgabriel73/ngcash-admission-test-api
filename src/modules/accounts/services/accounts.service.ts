@@ -43,13 +43,13 @@ export class AccountsService {
         }
 
         return await this.accountsRepository.findOne({ where: {
-            id: user.account.id
+                id: user.account.id
             }})
     }
 
     async findAccountById(accountId: number): Promise<Account> {
         return await this.accountsRepository.findOne({ where: {
-            id: accountId
+                id: accountId
             }})
     }
 

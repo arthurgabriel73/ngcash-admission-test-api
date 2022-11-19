@@ -2,7 +2,7 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-    OneToMany, JoinTable, CreateDateColumn, JoinColumn, OneToOne,
+    OneToMany, JoinTable, CreateDateColumn, JoinColumn, OneToOne, ManyToOne, PrimaryColumn,
 } from "typeorm";
 import {Account} from "../../accounts/entities/accounts.entity";
 
@@ -12,17 +12,21 @@ export class Transaction {
     @PrimaryGeneratedColumn()
     readonly id: number;
 
-    @OneToOne(() => Account, (account) => account.id)
-    @JoinColumn({ name: "DebitedAccount" })
+    @PrimaryColumn({ type: "int", name: "debitedAccountId" })
+    @ManyToOne(() => Account, (account) => account.id, {
+        onDelete: "CASCADE"
+    })
     debitedAccount: Account
 
-    @OneToOne(() => Account, (account) => account.id)
-    @JoinColumn({ name: "CreditedAccount" })
+    @PrimaryColumn({ type: "int", name: "creditedAccountId" })
+    @ManyToOne(() => Account, (account) => account.id, {
+        onDelete: "CASCADE"
+    })
     creditedAccount: Account
 
     @Column()
     value: number;
 
-    @CreateDateColumn({type: "timestamp without time zone"})
+    @CreateDateColumn({type: "date"})
     createdAt: Date
 }

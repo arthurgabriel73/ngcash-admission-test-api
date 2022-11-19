@@ -1,4 +1,4 @@
-import {Between, Repository} from "typeorm";
+import {Between, Repository, SelectQueryBuilder} from "typeorm";
 import {BadRequestException, Inject, Injectable, NotAcceptableException} from "@nestjs/common";
 import {Transaction} from "../entities/transactions.entity";
 import {GetAllTransactionsDto} from "../dtos/get-filtered-transactions.dto";
@@ -20,6 +20,10 @@ export class TransactionsService {
         const targetAccount = await this.accountsService.findOneAccountByUsername(targetUsername)
         const currentAccount = await this.accountsService.findAccountById(currentAccountId)
         let newTransaction = new Transaction()
+
+        if (targetAccount.id === currentAccount.id) {
+            throw new NotAcceptableException('Please, choose a valid target account.')
+        }
 
         currentAccount.balance = currentAccount.balance - data.value
         targetAccount.balance = targetAccount.balance + data.value
@@ -65,10 +69,11 @@ export class TransactionsService {
             }
         }
         if (data.day) {
-            return await this.transactionsRepository.find({ where: {
-                createdAt: day
-                }
-            })
+            return await this.transactionsRepository
+                .createQueryBuilder("Transaction")
+                .where(`Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
+                .where(`Transaction.creditedAccountId = :currentAccountId;`, {currentAccountId})
+                .getMany()
         }
 
         if (data.start && data.end) {
