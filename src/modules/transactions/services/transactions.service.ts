@@ -67,8 +67,7 @@ export class TransactionsService {
 
         return await this.transactionsRepository
             .createQueryBuilder("Transaction")
-            .where(`Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
-            .where(`Transaction.creditedAccountId = :currentAccountId;`, {currentAccountId})
+            .andWhere(`Transaction.creditedAccount = :currentAccountId OR Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
             .getMany()
     }
 
