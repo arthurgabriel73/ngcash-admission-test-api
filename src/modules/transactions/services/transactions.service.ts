@@ -98,6 +98,5 @@ export class TransactionsService {
             .createQueryBuilder("Transaction")
             .where(`Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
             .getMany()
-
     }
 }
