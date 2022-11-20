@@ -72,30 +72,24 @@ export class TransactionsService {
     }
 
     async getCashInFilteredByDay(currentAccountId: number, day: Date): Promise<Transaction[]> {
-        if (day) {
-            return await this.transactionsRepository
-                .createQueryBuilder("Transaction")
-                .where(`Transaction.creditedAccountId = :currentAccountId;`, {currentAccountId})
-                .where(`Transaction.createdAt = :day`, {day})
-                .getMany()
-        }
-        return await this.transactionsRepository
-            .createQueryBuilder("Transaction")
-            .where(`Transaction.creditedAccountId = :currentAccountId;`, {currentAccountId})
-            .getMany()
+        return (await this.transactionsRepository.find({
+            relations: {
+                creditedAccount: true
+            },
+            where: {
+                createdAt: day
+            }
+        })).filter(t => t.creditedAccount.id === currentAccountId)
     }
 
     async getCashOutFilteredByDay(currentAccountId: number, day: Date): Promise<Transaction[]> {
-        if(day) {
-            return await this.transactionsRepository
-                .createQueryBuilder("Transaction")
-                .where(`Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
-                .where(`Transaction.createdAt = :day`, {day})
-                .getMany()
-        }
-        return await this.transactionsRepository
-            .createQueryBuilder("Transaction")
-            .where(`Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
-            .getMany()
+        return (await this.transactionsRepository.find({
+            relations: {
+                debitedAccount: true
+            },
+            where: {
+                createdAt: day
+            }
+        })).filter(t => t.debitedAccount.id === currentAccountId)
     }
 }
