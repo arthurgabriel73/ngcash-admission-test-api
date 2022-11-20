@@ -4,7 +4,8 @@ import {CashOutDto} from "../dtos/cash-out.dto";
 import {TransactionsService} from "../services/transactions.service";
 import {Transaction} from "../entities/transactions.entity";
 import {GetFilteredTransactionsDto} from "../dtos/get-filtered-transactions.dto";
-import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiQuery, ApiTags} from "@nestjs/swagger";
+import {TransactionsEnum} from "../../../enums/transactions-enum";
 
 export const TRANSACTIONS_URL = "/transactions"
 
@@ -20,8 +21,14 @@ export class TransactionsController {
         return await this.transactionsService.create(data, req.user.id, username)
     }
 
+    @ApiQuery({ name: 'type', enum: TransactionsEnum, })
+    @ApiQuery({ name: 'day', type: "number", required: false })
     @Get('/self')
-    async getSelfTransactions(@Request() req, @Body() data: GetFilteredTransactionsDto): Promise<Transaction[]> {
+    async getSelfTransactions(@Request() req, @Query() query): Promise<Transaction[]> {
+        const data: GetFilteredTransactionsDto = {
+            day: query.day,
+            type: query.type,
+        }
         return await this.transactionsService.getFilteredTransactions(data, req.user.accountId)
     }
 }
