@@ -19,7 +19,6 @@ export class TransactionsService {
     async create(data: CashOutDto, currentAccountId: number, targetUsername: string): Promise<Transaction> {
         const targetAccount = await this.accountsService.findOneAccountByUsername(targetUsername)
         const currentAccount = await this.accountsService.findAccountById(currentAccountId)
-        let newTransaction = new Transaction()
 
         if (targetAccount.id === currentAccount.id) {
             throw new NotAcceptableException('Please, choose a valid target account.')
@@ -32,6 +31,7 @@ export class TransactionsService {
             throw new NotAcceptableException('Account out of founds.')
         }
 
+        let newTransaction = new Transaction()
         newTransaction.debitedAccount = currentAccount
         newTransaction.creditedAccount = targetAccount
         newTransaction.value = data.value
@@ -65,10 +65,7 @@ export class TransactionsService {
             return await this.getCashOutFilteredByDay(currentAccountId, day)
         }
 
-        return await this.transactionsRepository
-            .createQueryBuilder("Transaction")
-            .andWhere(`Transaction.creditedAccount = :currentAccountId OR Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
-            .getMany()
+        return await this.findAllUsersTransactions(currentAccountId)
     }
 
     async getCashInFilteredByDay(currentAccountId: number, day: Date): Promise<Transaction[]> {
@@ -91,5 +88,12 @@ export class TransactionsService {
                 createdAt: day
             }
         })).filter(t => t.debitedAccount.id === currentAccountId)
+    }
+
+    async findAllUsersTransactions(currentAccountId: number): Promise<Transaction[]> {
+        return await this.transactionsRepository
+            .createQueryBuilder("Transaction")
+            .andWhere(`Transaction.creditedAccount = :currentAccountId OR Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
+            .getMany()
     }
 }
