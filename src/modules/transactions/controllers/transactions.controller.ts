@@ -17,12 +17,20 @@ export class TransactionsController {
     constructor(private transactionsService: TransactionsService) {}
 
     @Post('cashout/:username')
-    async cashOut(@Request() req, @Body() data: CashOutDto, @Param('username') username: string): Promise<Transaction>{
+    async cashOut(
+        @Request() req, @Body() data: CashOutDto, @Param('username') username: string): Promise<Transaction>{
         return await this.transactionsService.create(data, req.user.id, username)
     }
 
-    @ApiQuery({ name: 'type', enum: TransactionsEnum, })
-    @ApiQuery({ name: 'day', type: "number", required: false })
+    @ApiQuery({
+        name: 'type',
+        enum: TransactionsEnum,
+        description: "Please choose an enum type.",})
+    @ApiQuery({ name: 'day',
+        type: "number",
+        required: false,
+        description: 'Please insert a unix time in milliseconds.',
+        example: "1668915368432"})
     @Get('/self')
     async getSelfTransactions(@Request() req, @Query() query): Promise<Transaction[]> {
         const data: GetFilteredTransactionsDto = {
