@@ -11,7 +11,7 @@ export class CreateUserDto {
     })
     @IsString()
     @IsNotEmpty()
-    @MinLength(3)
+    @MinLength(3, {message: 'The username field must be longer than or equal to 3 characters.'})
     username: string;
 
     @ApiProperty({

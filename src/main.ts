@@ -8,7 +8,7 @@ require('dotenv').config();
 async function bootstrap() {
 
 
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, { cors: true });
 
     const config = new DocumentBuilder().addBearerAuth()
         .setTitle('NGCASH ADMISSION TEST')
@@ -23,17 +23,20 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
 
-  app.useGlobalPipes(
+    app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
         forbidNonWhitelisted: true,
         transform: true
       })
-  );
+    );
 
-  const port = process.env.APP_PORT
-  await app.listen(port, () => {
+    const port = process.env.APP_PORT
+
+    app.enableCors();
+
+    await app.listen(port, () => {
     console.log(`Listening on port ${port}`)
-  }).catch(console.log)
+    }).catch(console.log)
 }
 bootstrap();
