@@ -6,9 +6,11 @@ import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 require('dotenv').config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
 
-    const config = new DocumentBuilder()
+
+    const app = await NestFactory.create(AppModule);
+
+    const config = new DocumentBuilder().addBearerAuth()
         .setTitle('NGCASH ADMISSION TEST')
         .setDescription('Essa aplicação foi feita por **Arthur Gabriel**, a pedido da empresa NG.')
         .setVersion('1.0')
