@@ -24,7 +24,7 @@ export class Transaction {
     })
     creditedAccount: Account
 
-    @Column()
+    @Column({ type: "real" })
     value: number;
 
     @CreateDateColumn({type: "date"})

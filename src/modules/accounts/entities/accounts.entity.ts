@@ -10,6 +10,6 @@ export class Account {
     @PrimaryGeneratedColumn()
     readonly id: number;
 
-    @Column()
+    @Column({ type: "real" })
     balance: number;
 }
