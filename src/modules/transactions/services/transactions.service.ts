@@ -1,10 +1,11 @@
 import {Between, Brackets, Repository, SelectQueryBuilder} from "typeorm";
 import {BadRequestException, Inject, Injectable, NotAcceptableException} from "@nestjs/common";
 import {Transaction} from "../entities/transactions.entity";
-import {GetAllTransactionsDto} from "../dtos/get-filtered-transactions.dto";
+import {GetFilteredTransactionsDto} from "../dtos/get-filtered-transactions.dto";
 import {CashOutDto} from "../dtos/cash-out.dto";
 import {AccountsService} from "../../accounts/services/accounts.service";
 import {Account} from "../../accounts/entities/accounts.entity";
+import {TransactionsEnum} from "../../../enums/transactions-enum";
 
 @Injectable()
 export class TransactionsService {
@@ -43,25 +44,18 @@ export class TransactionsService {
         return await this.transactionsRepository.save(newTransaction)
     }
 
-    async getFilteredTransactions(data: GetAllTransactionsDto, currentAccountId: number): Promise<Transaction[]> {
+    async getFilteredTransactions(data: GetFilteredTransactionsDto, currentAccountId: number): Promise<Transaction[]> {
         let day: Date = null
 
         if (data.day) {
             day = new Date(Number(data.day))
         }
 
-        if (data.type) {
-            if (data.type !== "cash-in" && data.type !== "cash-out") {
-                throw new BadRequestException('Invalid type of transactions. Please choose "cash-in" or ' +
-                    '"cash-out" for parameters.')
-            }
-        }
-
-        if (data.type === "cash-in") {
+        if (data.type === TransactionsEnum.CASH_IN) {
             return await this.getCashInFilteredByDay(currentAccountId, day)
         }
 
-        if (data.type === "cash-out") {
+        if (data.type === TransactionsEnum.CASH_OUT) {
             return await this.getCashOutFilteredByDay(currentAccountId, day)
         }
 

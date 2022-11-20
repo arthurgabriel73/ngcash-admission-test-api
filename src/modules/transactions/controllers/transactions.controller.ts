@@ -3,7 +3,7 @@ import {JwtAuthGuard} from "../../auth/security/jwt-auth.guard";
 import {CashOutDto} from "../dtos/cash-out.dto";
 import {TransactionsService} from "../services/transactions.service";
 import {Transaction} from "../entities/transactions.entity";
-import {GetAllTransactionsDto} from "../dtos/get-filtered-transactions.dto";
+import {GetFilteredTransactionsDto} from "../dtos/get-filtered-transactions.dto";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 
 export const TRANSACTIONS_URL = "/transactions"
@@ -21,13 +21,7 @@ export class TransactionsController {
     }
 
     @Get('/self')
-    async getSelfTransactions(@Request() req, @Query() query): Promise<Transaction[]> {
-        const data: GetAllTransactionsDto = {
-            day: query.day,
-            start: query.start,
-            end: query.end,
-            type: query.type,
-        }
+    async getSelfTransactions(@Request() req, @Body() data: GetFilteredTransactionsDto): Promise<Transaction[]> {
         return await this.transactionsService.getFilteredTransactions(data, req.user.accountId)
     }
 }

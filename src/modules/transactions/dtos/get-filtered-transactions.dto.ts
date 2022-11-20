@@ -1,17 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {Timestamp} from "typeorm";
+import {IsEnum, IsNumber, IsOptional} from "class-validator";
+import {TransactionsEnum} from "../../../enums/transactions-enum";
 
-export class GetAllTransactionsDto {
-    @ApiProperty({ nullable: true })
+
+export class GetFilteredTransactionsDto {
+    @ApiProperty({
+        type: () => "Timestamp",
+        description: "Timestamp in milliseconds",
+        example: 1668915368432,
+    })
+    @IsNumber()
+    @IsOptional()
     day: Timestamp
 
-    @ApiProperty({ nullable: true })
-    start: Timestamp
-
-    @ApiProperty({ nullable: true })
-    end: Timestamp
-
-    @ApiProperty({ nullable: true })
+    @ApiProperty({
+        description: "TransactionsEnum type",
+        example: "cash-in or cash-out",
+    })
+    @IsEnum(TransactionsEnum, {message: 'Please, choose a valid enum value: "cash-in" or "cash-out"'})
+    @IsOptional()
     type: string
 
 }
