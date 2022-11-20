@@ -1,4 +1,4 @@
-import {Between, Repository, SelectQueryBuilder} from "typeorm";
+import {Between, Brackets, Repository, SelectQueryBuilder} from "typeorm";
 import {BadRequestException, Inject, Injectable, NotAcceptableException} from "@nestjs/common";
 import {Transaction} from "../entities/transactions.entity";
 import {GetAllTransactionsDto} from "../dtos/get-filtered-transactions.dto";
@@ -47,7 +47,7 @@ export class TransactionsService {
         let day: Date = null
 
         if (data.day) {
-            day = new Date(Number(data.day)*1000)
+            day = new Date(Number(data.day))
         }
 
         if (data.type) {
@@ -65,35 +65,53 @@ export class TransactionsService {
             return await this.getCashOutFilteredByDay(currentAccountId, day)
         }
 
-        return await this.findAllUsersTransactions(currentAccountId)
+        return await this.findAllUsersTransactions(currentAccountId, day)
     }
 
     async getCashInFilteredByDay(currentAccountId: number, day: Date): Promise<Transaction[]> {
-        return (await this.transactionsRepository.find({
-            relations: {
-                creditedAccount: true
-            },
-            where: {
-                createdAt: day
-            }
-        })).filter(t => t.creditedAccount.id === currentAccountId)
+        if (day) {
+            return await this.transactionsRepository
+                .createQueryBuilder("Transaction")
+                .where(`Transaction.createdAt = :day`, {day})
+                .andWhere(new Brackets((qb) => {
+                    qb.where("Transaction.creditedAccount = :currentAccountId", { currentAccountId })
+                }),).getMany()
+        }
+        return await this.transactionsRepository
+            .createQueryBuilder("Transaction")
+            .andWhere(`Transaction.creditedAccount = :currentAccountId;`, { currentAccountId })
+            .getMany()
     }
 
     async getCashOutFilteredByDay(currentAccountId: number, day: Date): Promise<Transaction[]> {
-        return (await this.transactionsRepository.find({
-            relations: {
-                debitedAccount: true
-            },
-            where: {
-                createdAt: day
-            }
-        })).filter(t => t.debitedAccount.id === currentAccountId)
-    }
-
-    async findAllUsersTransactions(currentAccountId: number): Promise<Transaction[]> {
+        if (day) {
+            return await this.transactionsRepository
+                .createQueryBuilder("Transaction")
+                .where(`Transaction.createdAt = :day`, {day})
+                .andWhere(new Brackets((qb) => {
+                    qb.where("Transaction.debitedAccount = :currentAccountId", { currentAccountId })
+                }),).getMany()
+        }
         return await this.transactionsRepository
             .createQueryBuilder("Transaction")
-            .andWhere(`Transaction.creditedAccount = :currentAccountId OR Transaction.debitedAccountId = :currentAccountId;`, {currentAccountId})
+            .andWhere(`Transaction.debitedAccountId = :currentAccountId;`, { currentAccountId })
+            .getMany()
+    }
+
+    async findAllUsersTransactions(currentAccountId: number, day: Date): Promise<Transaction[]> {
+        if (day) {
+            return await this.transactionsRepository
+                .createQueryBuilder("Transaction")
+                .where(`Transaction.createdAt = :day`, {day})
+                .andWhere(new Brackets((qb) => {
+                        qb.where("Transaction.debitedAccount = :currentAccountId", { currentAccountId })
+                            .orWhere("Transaction.creditedAccount = :currentAccountId", {currentAccountId})
+                    }),).getMany()
+        }
+        return await this.transactionsRepository
+            .createQueryBuilder("Transaction")
+            .andWhere(`Transaction.debitedAccountId = :currentAccountId OR Transaction.creditedAccountId =
+             :currentAccountId;`, {currentAccountId})
             .getMany()
     }
 }
