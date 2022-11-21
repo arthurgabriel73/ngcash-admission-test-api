@@ -1,73 +1,101 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Back-End NGCASH ADMISSION TEST
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Para rodar a aplicação no seu linux ou wsl com o git clone rode os seguintes comandos:
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+    $ mkdir ngcash-api
+    $ cd ngcash-api
+    $ git init
+    $ git clone <api-url>
+    $ cd <api-name>
+    $ cp example.env .env
+    $ vi .env
+Agora coloque as variáveis de ambiente e, em seguida rode o seguinte comando:
+    
+    $ docker compose up
 
-## Description
+Para rodar a aplicação no seu linux ou wsl abrindo o arquivo localmente, entre na raiz do projeto e rode os seguintes comandos:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+    $ cp example.env .env
+    $ vi .env
 
-## Installation
+Agora coloque as variáveis de ambiente, por exemplo:
 
-```bash
-$ npm install
-```
+    AUTH_SECRET=kuhIUHku65B
+    POSTGRES_HOST=db
+    POSTGRES_PORT=5432
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=docker
+    POSTGRES_DB=postgres
+    POSTGRES_TEST_DB=
+    INITIAL_BALANCE=100
+    APP_PORT=3001
 
-## Running the app
+Em seguida, rode o seguinte comando:
 
-```bash
-# development
-$ npm run start
+    $ docker compose up
 
-# watch mode
-$ npm run start:dev
+## Para acessar a documentação implementada com o Swagger, suba os containers e acesse:
 
-# production mode
-$ npm run start:prod
-```
+    http://localhost:3001/api
 
-## Test
+Caso ocorra um erro de permissão para rodar o script, rode o seguinte comando:
 
-```bash
-# unit tests
-$ npm run test
+    $ chmod +x .docker/entrypoint.sh (Permitir que o script entrypoint.sh seja executado)
 
-# e2e tests
-$ npm run test:e2e
+## Rotas:
 
-# test coverage
-$ npm run test:cov
-```
+    /users:
+        /signup {createUserDto}
 
-## Support
+Para utilizar a rota /signup deve-se enviar um Dto de criar usuário "CreateUserDto",
+ele fica da seguinte forma:
+	
+		{
+			"username": "jeff123",
+			"password": "Password123$"
+		}
+_
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+    /auth:
+        /login {loginDto}
 
-## Stay in touch
+Para realizar o login na rota /login deve-se enviar um Dto de login "LoginDto",
+ele fica da seguinte forma:
+		
+		{
+			"username": "jeff123",
+			"password": "Password123$"
+		}
+_
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+    /accounts:
+        /balance {token}
 
-## License
+Para observar o saldo da sua própria conta deve-se apenas realizar a autorização,
+a própria aplicação vai reconhecer a conta do usuário pelo token
 
-Nest is [MIT licensed](LICENSE).
+    /transactions:
+    /cashout/:username {token, CashOutDto}
+Para realizar uma transação na rota /cashout deve-se enviar um Dto de transação "CashOutDto",
+ele fica da seguinte forma:
+
+			{
+				"value": 33
+			}
+
+Além disso, deve-se acrescentar o nome do usuário que participará da transação passivamente.
+A aplicação reconhecerá o usuário ativo da transação pelo token.
+
+	/self {token, query parameters}
+Para observar suas transações, o usuário precisa se autorizar com o token,
+caso ele queira filtrar por data e/ou tipo de transação/participação, deve-se passar os filtros
+como parâmetros, por exemplo:
+		
+		/self?day=1668915368432  (Unix em milisegundos)
+		/self?type=cash-in
+		/self?type=cash-out
+		/self?type=none
+
+ou combinado:
+
+		/self?type=cash-in&day=1668915368432
